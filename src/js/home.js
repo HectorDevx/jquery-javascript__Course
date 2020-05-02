@@ -1,70 +1,3 @@
-//----------------------------------------Variables
-// console.log("hola mundo!");
-// const noCambia = "Leonidas";
-
-// let cambia = "@LeonidasEsteban";
-
-// function cambiarNombre(nuevoNombre) {
-//   cambia = nuevoNombre;
-// }
-
-//----------------------------------------Promesas
-// const getUserAll = new Promise(function (todoBien, todoMal) {
-//   // Llamar a un Api
-//   setTimeout(function () {
-//     //Luego de 3s
-//     todoBien("Se acabó el tiempo");
-//   }, 5000);
-// });
-
-// const getUser = new Promise(function (todoBien, todoMal) {
-//   // Llamar a un Api
-//   setTimeout(function () {
-//     //Luego de 3s
-//     todoBien("Todo bien");
-//   }, 3000);
-// });
-
-// getUser
-//   .then(function () {
-//     console.log("todo está bien en la vida");
-//   })
-//   .catch(function (message) {
-//     console.log(message);
-//   });
-
-// Promise.race([getUserAll, getUser])
-//   .then(function (message) {
-//     console.log(message);
-//   })
-//   .catch(function (message) {
-//     console.log(message);
-//   });
-
-// --------------------------------------------jQuery XMLHttpRequest
-// $.ajax("https://randomuser.me/api/", {
-//   method: "GET",
-//   sucess: function (data) {
-//     console.log(data);
-//   },
-//   error: function (error) {
-//     console.log(error);
-//   },
-// });
-
-//------------------------------------------------Javascript Fetch
-// fetch("https://randomuser.me/api/")
-//   .then(function (response) {
-//     console.log(response);
-//     return response.json();
-//   })
-//   .then(function (user) {
-//     console.log("user", user.results[0].name.first);
-//   })
-//   .catch(function () {
-//     console.log("Hubo un fallo");
-//   });
-
 //----------------------------------------Funciones Asincronas
 //Solicitamos la información de nuestra API y la almacenamos en variables.
 (async function load() {
@@ -78,7 +11,7 @@
     }
   }
 
-  //Leasignamos el evento a escuchar al formulario de buscador.
+  //Le asignamos el evento a escuchar al formulario de buscador.
   const $form = document.getElementById("form");
   const $home = document.getElementById("home");
   const $featuringContainer = document.getElementById("featuring");
@@ -242,4 +175,53 @@
     $overlay.classList.remove("active");
     $modal.style.animation = "modalOut .8s forwards";
   }
+
+  //1. Crear la función que nos trae nuestros datos desde una API
+  async function getUsers(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  }
+
+  //2. Variable con nuestra API
+  const USERS_API = "https://randomuser.me/api/";
+
+  //3. Asignamos el selector de nuestra clase padre
+  $friends = document.querySelector(".playlistFriends");
+
+  //4. Función de pintado del template HTML para cada usuario
+  function templateUsers(user) {
+    return `
+      <li class="playlistFriends-item">
+        <a href="#">
+        <img
+          src="${user.picture.thumbnail}"
+          alt="echame la culpa"
+        />
+        <span>
+          ${user.name.first} ${user.name.last}
+        </span>
+        </a>
+  </li>`;
+  }
+
+  //5. Transforma nuestro string en un elemento HTML
+  function userHTML(userString) {
+    const HTML = document.implementation.createHTMLDocument();
+    HTML.body.innerHTML = userString;
+    return HTML.body.children[0];
+  }
+
+  //6. Hacemos el ciclo for para cada usuario que recibimos, transformamos a String, luego a HTML y enviamos al selector.
+  function renderUsers(userList, $selector) {
+    userList.forEach((user) => {
+      const userToString = templateUsers(user);
+      const userToHTML = userHTML(userToString);
+      $selector.append(userToHTML);
+    });
+  }
+
+  //7. Metemos los resultados a una variable y ejecutamos la función principal.
+  const { results } = await getUsers(`${USERS_API}?results=10`);
+  renderUsers(results, $friends);
 })();
