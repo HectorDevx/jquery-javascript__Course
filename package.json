@@ -1,0 +1,19 @@
+{
+  "name": "postcss",
+  "version": "1.0.0",
+  "description": "Curso de PostCSS en Platzi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "npm",
+    "postcss"
+  ],
+  "author": "Héctor Reyes <hectordevx@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^9.7.6",
+    "postcss-cli": "^7.1.1"
+  }
+}

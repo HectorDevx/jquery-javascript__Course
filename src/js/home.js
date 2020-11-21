@@ -110,23 +110,37 @@
     });
   }
 
+  //Función si hay cache utiliza esos datos, si no lo hay solicitalos
+  async function cacheExist(category) {
+    const listName = `${category}List`;
+    const cacheList = window.localStorage.getItem(listName);
+    if (cacheList) {
+      return JSON.parse(cacheList);
+    }
+    const {
+      data: { movies: data },
+    } = await getData(`${BASE_API}list_movies.json?genre=${category}`);
+    localStorage.setItem("listName", JSON.stringify(data));
+    return data;
+  }
+
   //Le enviamos los parametros de cada lista y contenedor HTML a la función que nos genera el template para cada película.
   //Hacemos la petición de información justo antes de utilizarla para que vaya cargando en orden
-  const {
-    data: { movies: actionList },
-  } = await getData(`${BASE_API}list_movies.json?genre=action`);
+  // const {
+  //   data: { movies: actionList },
+  // } = await getData(`${BASE_API}list_movies.json?genre=action`);
+  const actionList = await cacheExist("action");
+  // localStorage.setItem("actionList", JSON.stringify(actionList));
   const $actionContainer = document.querySelector("#action");
   renderMovieList(actionList, $actionContainer, "action");
 
-  const {
-    data: { movies: dramaList },
-  } = await getData(`${BASE_API}list_movies.json?genre=drama`);
+  const dramaList = await cacheExist("drama");
+  // localStorage.setItem("dramaList", JSON.stringify(dramaList));
   const $dramaContainer = document.getElementById("drama");
   renderMovieList(dramaList, $dramaContainer, "drama");
 
-  const {
-    data: { movies: animationList },
-  } = await getData(`${BASE_API}list_movies.json?genre=animation`);
+  const animationList = await cacheExist("animation");
+  // localStorage.setItem("dramaList", JSON.stringify(dramaList));
   const $animationContainer = document.getElementById("animation");
   renderMovieList(animationList, $animationContainer, "animation");
 
